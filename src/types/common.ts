@@ -33,3 +33,29 @@ export const zPayload = z.strictObject({
 })
 
 export type Payload = z.infer<typeof zPayload>
+
+export const zFormValues = z.strictObject({
+  firstName: zPayload.shape.firstName,
+  middleName: zPayload.shape.middleName.or(z.literal('')),
+  lastName: zPayload.shape.lastName,
+  egn: zPayload.shape.egn.or(z.literal('')),
+  phoneNumber: zPayload.shape.phoneNumber.or(z.literal('')),
+  address: zPayload.shape.address,
+  postcode: zPayload.shape.postcode,
+  email: zPayload.shape.email.or(z.literal(''))
+})
+// Phone number is required if email is empty
+.refine(data => !(!data.email && !data.phoneNumber), {
+  message: 'Please provide either a phone number or an email address.',
+  path: ['email'],
+})
+// Sofia postcode check
+.refine(data => {
+  return data.address.includes('Sofia') ? data.postcode === '1000' : true
+}, {
+  message: 'The provided postcode does not match the address',
+  path: ['postcode']
+})
+
+export type FormValues = z.infer<typeof zFormValues>
+
