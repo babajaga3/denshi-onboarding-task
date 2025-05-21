@@ -5,7 +5,11 @@ import type { FormValues } from '@/types'
 
 export function AddressInformation({ form } : { form: UseFormReturn<FormValues> }) {
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div>
+        <h3 style={{}}>Address Information</h3>
+        <p style={{ color: '#898782' }}>We will use it to send any postal related news.</p>
+      </div>
       <TextField
         required
         variant="outlined"
@@ -25,6 +29,6 @@ export function AddressInformation({ form } : { form: UseFormReturn<FormValues> 
         helperText={form.formState.errors.postcode?.message}
         autoComplete={'none'}
       />
-    </>
+    </div>
   )
 }

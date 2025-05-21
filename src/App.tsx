@@ -12,7 +12,9 @@ function App() {
   return (
     <>
       <QueryClientProvider client={tanstackQC}>
-        <Form />
+        <div className="app">
+          <Form />
+        </div>
       </QueryClientProvider>
     </>
   )

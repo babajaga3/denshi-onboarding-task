@@ -7,12 +7,15 @@ import { useCallback, useState } from 'react'
 import { PersonalInformation } from '@/components/personal-information.tsx'
 import { AddressInformation } from '@/components/address-information.tsx'
 import { ContactInformation } from '@/components/contact-information.tsx'
+import { useIsMobile } from '@/hooks/use-is-mobile.tsx'
 
 
 export function Form() {
+  const isMobile = useIsMobile()
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(zFormValues),
+    mode: 'onChange',
+    resolver: zodResolver(zFormValues)
   })
 
   const customerMutation = useMutation({
@@ -66,9 +69,17 @@ export function Form() {
         </Alert>
       </Snackbar>
 
-      <h1>Peronsal Information Form</h1>
+      <h1>ID Online Registration Form</h1>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="form">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '40px',
+          width: !isMobile ? '30%' : '95%'
+        }}
+      >
 
         <PersonalInformation form={form} />
 
