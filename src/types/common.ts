@@ -31,19 +31,5 @@ export const zPayload = z.strictObject({
   postcode: zPostcode,
   email: zEmail
 })
-  // Phone number is required if email is empty
-  .refine(data => {
-    if (!data.email && !data.phoneNumber) return false
-  }, {
-    message: 'Please provide either a phone number or an email address.',
-    path: ['email', 'phoneNumber']
-  })
-  // Sofia postcode check
-  .refine(data => {
-    if (data.address.includes('Sofia') && data.postcode !== '1000') return false // todo check '1000'
-  }, {
-    message: 'The provided postcode does not match the address',
-    path: ['postcode']
-  })
 
 export type Payload = z.infer<typeof zPayload>
