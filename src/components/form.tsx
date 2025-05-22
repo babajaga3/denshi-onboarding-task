@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { type FormValues, type Payload, zFormValues } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { useCallback, useState } from 'react'
+import { type SyntheticEvent, useCallback, useState } from 'react'
 import { PersonalInformation } from '@/components/personal-information.tsx'
 import { AddressInformation } from '@/components/address-information.tsx'
 import { ContactInformation } from '@/components/contact-information.tsx'
@@ -11,34 +11,55 @@ import { useIsMobile } from '@/hooks/use-is-mobile.tsx'
 import { createCustomer } from '@/api'
 
 
+interface ToastState {
+  open: boolean
+  message: string
+  status: 'success' | 'error'
+}
+
 export function Form() {
   const isMobile = useIsMobile()
 
+  // Toast state
+  const [ toastState, setToastState ] = useState<ToastState>({
+    open: false,
+    message: '',
+    status: 'success'
+  })
+
+  // Form state
   const form = useForm<FormValues>({
     mode: 'onChange',
     resolver: zodResolver(zFormValues)
   })
 
+  // Tanstack Mutation
   const customerMutation = useMutation({
     mutationKey: [ 'customer', 'create', form.getValues('egn') ],
-    mutationFn: createCustomer,
+    // mutationFn: createCustomer,
+    mutationFn: async (payload: Payload) => {
+      console.log(payload)
+    },
     onSuccess: () => {
       form.reset()
-      handleClick()
+      handleClick('success', 'Your form has been submitted successfully!')
     },
     onError: () => {
-      
+      handleClick('error', 'There was an error processing your form. Please try again later.')
     },
   })
 
-  const [open, setOpen] = useState(false);
+  // Toast handlers
+  const handleClick = useCallback((status: ToastState['status'], message: string) => {
+    setToastState({
+      open: true,
+      message,
+      status
+    })
+  }, [ setToastState ])
 
-  const handleClick = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
+  const handleClose = useCallback((
+    event?: SyntheticEvent | Event,
     reason?: SnackbarCloseReason,
   ) => {
     event?.preventDefault()
@@ -46,9 +67,15 @@ export function Form() {
       return;
     }
 
-    setOpen(false);
-  };
+    setToastState(prev => {
+      return {
+        ...prev,
+        open: false
+      }
+    })
+  }, [ setToastState ])
 
+  // Form submit handler
   const onSubmit = useCallback((values: FormValues) => {
 
     // Construct payload
@@ -61,18 +88,16 @@ export function Form() {
     customerMutation.mutate(payload)
   }, [ customerMutation ])
 
-  console.log('form', form.formState.errors)
-
   return (
     <>
-      <Snackbar open={open} autoHideDuration={null} onClose={handleClose}>
+      <Snackbar open={toastState.open} autoHideDuration={3000} onClose={handleClose}>
         <Alert
           onClose={handleClose}
-          severity="success"
+          severity={toastState.status}
           variant="filled"
           sx={{ width: '100%' }}
         >
-          Your form has been submitted successfully!
+          {toastState.message}
         </Alert>
       </Snackbar>
 
