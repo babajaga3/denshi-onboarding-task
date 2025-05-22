@@ -36,10 +36,10 @@ export function Form() {
   // Tanstack Mutation
   const customerMutation = useMutation({
     mutationKey: [ 'customer', 'create', form.getValues('egn') ],
-    // mutationFn: createCustomer,
-    mutationFn: async (payload: Payload) => {
-      console.log(payload)
-    },
+    mutationFn: createCustomer,
+    // mutationFn: async (payload: Payload) => {
+    //   console.log(payload)
+    // }, // Alternative mutation fn that succeeds
     onSuccess: () => {
       form.reset()
       handleClick('success', 'Your form has been submitted successfully!')
