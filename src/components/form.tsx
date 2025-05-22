@@ -1,6 +1,6 @@
 import { Alert, Button, Snackbar, type SnackbarCloseReason } from '@mui/material'
 import { useForm } from 'react-hook-form'
-import { type FormValues, zFormValues } from '@/types'
+import { type FormValues, type Payload, zFormValues } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
@@ -8,6 +8,7 @@ import { PersonalInformation } from '@/components/personal-information.tsx'
 import { AddressInformation } from '@/components/address-information.tsx'
 import { ContactInformation } from '@/components/contact-information.tsx'
 import { useIsMobile } from '@/hooks/use-is-mobile.tsx'
+import { createCustomer } from '@/api'
 
 
 export function Form() {
@@ -20,15 +21,13 @@ export function Form() {
 
   const customerMutation = useMutation({
     mutationKey: [ 'customer', 'create', form.getValues('egn') ],
-    mutationFn: async (values: FormValues) => {
-      console.log(values)
-    }, // todo add logic
+    mutationFn: createCustomer,
     onSuccess: () => {
-      form.reset(undefined, { keepDirty: false, keepTouched: false })
+      form.reset()
       handleClick()
     },
     onError: () => {
-      // Inform user
+      
     },
   })
 
@@ -51,7 +50,15 @@ export function Form() {
   };
 
   const onSubmit = useCallback((values: FormValues) => {
-    customerMutation.mutate(values)
+
+    // Construct payload
+    const payload: Payload = {
+      type: 'INDIVIDUAL',
+      ...values
+    }
+
+    // Invoke mutation
+    customerMutation.mutate(payload)
   }, [ customerMutation ])
 
   console.log('form', form.formState.errors)
