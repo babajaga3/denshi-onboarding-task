@@ -7,7 +7,7 @@ export function ContactInformation({ form } : { form: UseFormReturn<FormValues> 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
       <div>
-        <h3 style={{}}>Personal Information</h3>
+        <h3 style={{}}>Contact Information</h3>
         <p style={{ color: '#898782' }}>We will use this to contact you. You may fill out one or both fields.</p>
       </div>
       <TextField
