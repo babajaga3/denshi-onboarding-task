@@ -18,6 +18,7 @@ export function ContactInformation({ form } : { form: UseFormReturn<FormValues> 
         error={!!form.formState.errors.email}
         helperText={form.formState.errors.email?.message}
         autoComplete={'none'}
+        type="email"
       />
       <TextField
         required={!form.watch('email')} // Required if email is empty
@@ -27,6 +28,7 @@ export function ContactInformation({ form } : { form: UseFormReturn<FormValues> 
         error={!!form.formState.errors.phoneNumber}
         helperText={form.formState.errors.phoneNumber?.message}
         autoComplete={'none'}
+        type={'tel'}
       />
     </div>
   )
